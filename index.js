@@ -104,6 +104,6 @@ function reportError(err) {
     if (currentEmitter && currentEmitter._events.error) {
         currentEmitter.emit("error", err, currentEmitter.errorName)
     } else {
-        console.error("ERROR in test", err.message)
+        console.error("ERROR in test", err.message, err.stack, err)
     }
 }
