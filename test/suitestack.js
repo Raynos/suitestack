@@ -3,8 +3,8 @@ var test = require("suitestack"),
     total = 0
 
 // report
-test.on("error", function (err) {
-    console.error("FAIL:", err.message, err.stack)
+test.on("error", function (err, name) {
+    console.error("FAIL:", err.message, err.stack, name)
 })
 
 test.on("test", function () {

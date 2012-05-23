@@ -1,9 +1,3 @@
-# suitestack
-
-simplified unit testing
-
-## Example
-
 var test = require("suitestack"),
     assert = require("assert"),
     noOfTests = 0
@@ -27,8 +21,11 @@ test.on("test end", function () {
 
 test.on("end", function () {
     assert(noOfTests === 0, "all tests did not finish")
+    console.log("test finished")
 })
 
+
+// tests
 test("A synchronous unit test", function () {
     assert.equal(true, true, "JavaScript hates us :(")
 })
