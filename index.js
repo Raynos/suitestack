@@ -77,7 +77,7 @@ function runTest(options) {
         test = options.test,
         name = options.name
 
-    emitter.emit("test", name)
+    emitter.emit("test", name, test)
 
     try {
         if (block.length === 2) {
@@ -92,11 +92,11 @@ function runTest(options) {
 
     function done(err) {
         if (err) {
-            emitter.emit("error", err, name)
+            emitter.emit("error", err, name, test)
         } else {
-            emitter.emit("pass", name)
+            emitter.emit("pass", name, test)
         }
-        emitter.emit("test end", name)
+        emitter.emit("test end", name, test)
         options.callback()
     }
 }

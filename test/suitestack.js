@@ -36,9 +36,10 @@ test("test is an eventemitter", function () {
 test("test fires an error event when test block fails", function (_, done) {
     var t = test.makeTest()
 
-    t.on("error", function (err, name) {
+    t.on("error", function (err, name, test) {
         assert(err.message === "fail", "test did not fail")
         assertName(name)
+        assertTest(test)
         done()
     })
 
@@ -65,8 +66,9 @@ test("test works asynchronously", function (_, done) {
 test("test fires a test event when you start a test", function (_, done) {
     var t = test.makeTest()
 
-    t.on("test", function (name) {
+    t.on("test", function (name, test) {
         assertName(name)
+        assertTest(test)
         done()
     })
 
@@ -77,8 +79,9 @@ test("test fires a test end event when a test ends", function (_, done) {
     var t = test.makeTest(),
         count = 0
 
-    t.on("test end", function (name) {
+    t.on("test end", function (name, test) {
         assertName(name)
+        assertTest(test)
         assert(count === 1, "count is incorrect")
         done()
     })
@@ -92,8 +95,9 @@ test("tests fires pass when a tests passes", function (_, done) {
     var t = test.makeTest(),
         count = 0
 
-    t.on("pass", function (name) {
+    t.on("pass", function (name, test) {
         assertName(name)
+        assertTest(test)
         assert(count === 1, "count is incorrect")
         done()
     })
@@ -156,4 +160,8 @@ test("tests run in test order", function (_, done) {
 
 function assertName(name) {
     assert(name === "name", "test name is incorrect")
+}
+
+function assertTest(test) {
+    assert(test, "test object does not exist")
 }
