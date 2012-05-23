@@ -34,7 +34,6 @@ function makeTestAndRun(parent) {
 
         function next() {
             node.block = null
-            node.testName = null
             run()
         }
     }
@@ -60,11 +59,11 @@ function findNode(tree) {
     var nodes = tree.nodes
     for (var i = 0; i < nodes.length; i++) {
         var node = nodes[i]
-        if (node.testName) {
+        if (node.block) {
             return node
         }
         node = findNode(node)
-        if (node !== null && node.testName) {
+        if (node !== null && node.block) {
             return node
         }
     }
