@@ -1,43 +1,13 @@
 var extend = require("xtend"),
     EventEmitter = require("events").EventEmitter.prototype,
-    test = makeTestAndRun(null),
+    test = makeTest(),
     currentEmitter
 
-test.makeTest = makeTestAndRun
+test.makeTest = makeTest
 
 process.on("uncaughtException", reportError)
 
 module.exports = test
-
-function makeTestAndRun(parent) {
-    var test = extend(makeTest(parent), EventEmitter)
-
-    process.nextTick(run)
-
-    return test
-
-    function run() {
-        var node = findNode(test)
-        if (node) {
-            currentEmitter = test
-            currentEmitter.errorName = node.testName
-            runTest({
-                emitter: test, 
-                test: node, 
-                name: node.testName, 
-                block: node.block, 
-                callback: next
-            })
-        } else {
-            test.emit("end")
-        }
-
-        function next() {
-            node.block = null
-            run()
-        }
-    }
-}
 
 function makeTest(parent) {
     extend(test, {
@@ -45,14 +15,45 @@ function makeTest(parent) {
         parent: parent
     })
 
+    if (parent === undefined) {
+        extend(test, EventEmitter)
+    }
+
     return test
 
     function test(name, block) {
+        if (parent === undefined && test.nodes.length === 0) {
+            process.nextTick(run.bind(null, test))
+        }
+
         test.nodes.push(extend(makeTest(test), {
             testName: name,
             block: block
         }))
     }    
+}
+
+function run(test) {
+    var node = findNode(test)
+    if (node) {
+        currentEmitter = test
+        currentEmitter.errorName = node.testName
+        runTest({
+            emitter: test, 
+            test: node, 
+            name: node.testName, 
+            block: node.block, 
+            callback: next
+        })
+    } else {
+        test.emit("end")
+        test.nodes = []
+    }
+
+    function next() {
+        node.block = null
+        run(test)
+    }
 }
 
 function findNode(tree) {
@@ -63,11 +64,10 @@ function findNode(tree) {
             return node
         }
         node = findNode(node)
-        if (node !== null && node.block) {
+        if (node !== undefined && node.block) {
             return node
         }
     }
-    return null
 }
 
 function runTest(options) {
